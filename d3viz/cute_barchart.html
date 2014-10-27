@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<style type="text/css">
+text {
+    fill: #000000;
+    font-family: sans-serif;
+    font-size: 14px;
+}
+rect {
+}
+rect:hover{
+    opacity: 0.5;
+}
+.nicetxt{
+    opacity: 1;
+    fill: #FFFFFF;
+    font-family: sans-serif;
+    font-size: 11px;
+}
+</style>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <style type="text/css"></style>
+    </head>
+<body>
+        <svg> </svg>
+<script type="text/javascript">
+var w = 500,
+    h = 150;
+var svg = d3.select("body").select("svg")
+    .attr("width",w).attr("height",h);
+
+var barHeights = [];
+var numBars = 20;
+var barWidth = Math.round(w/numBars) - 3;
+for (var i = 0; i < numBars; i++){
+    barHeights.push(Math.round(Math.random()*90+9));
+}
+svg.selectAll("rect").data(barHeights).enter().append("rect")
+    .attr("fill",function(d) { return "rgb(0,0,"+Math.round(d*2.5)+")";})
+    .attr("width",barWidth)
+    .attr("height",function(d) { return d; })
+    .attr("x",function(d,i){ return i*(barWidth+3); })
+    .attr("y",function(d) { return h-d ; })
+svg.selectAll("text").data(barHeights).enter().append("text").attr("class","nicetxt")
+    .text(function(d) {return d;})
+    .attr("text-anchor","middle")
+    .attr("x",function(d,i){ return i*(barWidth+3)+(barWidth/2); })
+    .attr("y",function(d){ return h-d+13;});
+svg.append("text").text("Randomly Arranged Bar Chart").attr("text-anchor","middle").attr("x",w/2).attr("y",20)
+</script>
+</body>
+</html>

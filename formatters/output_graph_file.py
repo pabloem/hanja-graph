@@ -106,7 +106,7 @@ id = 1
 for word in words:
     word['id'] = id
     word[u'label'] = 'W-'+word['korean']+word['english'].strip()
-    word[u'type'] = "TRUE"
+    word[u'type'] = "1"
     id = id+1
 for hanja in hanjas:
     hanja['id'] = id = id+1

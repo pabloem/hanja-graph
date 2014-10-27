@@ -51,7 +51,7 @@ def make_graphml_tree(words,hanjas,links):
     root.append(\
         etree.Element("key",id="type"))
     root[-1].set("for","node")
-    root[-1].set("attr.type","boolean")
+    root[-1].set("attr.type","int")
     root[-1].set("attr.name","type")
     
 
@@ -80,7 +80,7 @@ def make_graphml_tree(words,hanjas,links):
         this_word[-1].text=word['label']
         this_word.append(etree.Element\
                 ("data",key="type"))#,attr.name="type",attr.type="boolean"))
-        this_word[-1].text="true"
+        this_word[-1].text="1"
         
     
     for hanja in hanjas:

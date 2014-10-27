@@ -23,3 +23,7 @@ just want to have the data after all the processing
     the korean words from the bipartite graph. In the current version, the edge
     weights are 1 or 2, depending on how many chinese characters are shared
     between two words.
+* d3viz - This directory contains the code for the project of d3 visualization
+of the data. To use this directory, it is good to keep the d3 distro up to date
+by executing ```wget https://github.com/mbostock/d3/zipball/master``` in the
+directory.

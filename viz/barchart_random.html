@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <style type="text/css">
+          div.bar {
+              display: inline-block;
+              width: 20px;
+              height: 75px;
+              margin-right: 2px;
+              background-color: navy;
+              }
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+          var dataset = []
+          for (var i = 0; i < 30; i++){
+              dataset = dataset.concat(Math.round(Math.random()*30));
+          }
+          var newDataset = [1,2,3,4]
+          var htmlData = [1]
+          function compute_text(d) {
+              if(d == 15){
+                  return 'Five guys!';
+              }
+              return 'Hello friend number: '+d
+          }
+          d3.select("html").data(htmlData)//.enter().append("html")
+          d3.select("body").selectAll("div").data(dataset).enter().append("div").text(function(d) { return compute_text(d); })
+//          d3.select("body").append("div").text(function(d) { return compute_text(d); })
+          /* On a selection, we can apply many different functions, not just **text**, functions that we can call are:
+             * style
+             * attr
+          */
+          d3.select("body").selectAll("div").attr("class","bar").data(newDataset).enter().append("div").attr("class","bar")
+          d3.selectAll("div.bar").text("")
+          d3.selectAll("div.bar").data(dataset).style("height",function(d) { return d*5+"px"; })
+    
+        </script>
+    </body>
+</html>

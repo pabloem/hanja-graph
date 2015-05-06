@@ -4,6 +4,7 @@ from hanja_datastore import hanja_datastore
 from collections import deque
 from urllib import quote
 import json
+import ipdb
 
 class naver_scraper(object):
     def __init__(this,config):
@@ -16,25 +17,31 @@ class naver_scraper(object):
         this._scraped_hanjas = 0
         this._max_hanjas = config['max_hanjas']
         this._english_prefix = config['english_meaning_pref']
+        this._requests = 0
         this.urls = []
         this._hanja_queue.append(this.initial_hanja)
         this._ds.addRootPlaceholder(this.initial_hanja)
 
     def _get_the_soup(this,url):
         this.urls.append(url)
-        print("Scraping page: "+url)
+        print("GETSOUP: Scraping page: "+url)
         r = requests.get(url)
         sp = BeautifulSoup(r.text)
+        this._requests += 1
         return sp
 
     def _get_english(this,chinese, word_dic):
+        print("GETENGL:Getting for " +str(word_dic))
         url_chinese = chinese.encode('utf-8')
         url_chinese = quote(url_chinese)
         url = this._english_prefix+url_chinese
 
         sp = this._get_the_soup(url)
 
-        equivs = sp.select(".fnt_k05")[0].select(".EQUIV")
+        try:
+            equivs = sp.select(".fnt_k05")[0].select(".EQUIV")
+        except IndexError:
+            print("Failed to get english meaning for: ", url_chinese);
         english = ""
         for i,equiv in enumerate(equivs):
             english = english + equiv.text +", "
@@ -55,29 +62,30 @@ class naver_scraper(object):
 
             sp = this._get_the_soup(scrape_url)
 
-            words_dl = sp.select("dl")[3]
+            try:
+                words_dl = sp.select("#content")[0].select("dl")[0]
+            except IndexError:
+                print("SCRWRD: Couldn't find definitions in page")
+                continue
             hanja_dt = words_dl.select("dt")
             han_mean_dd = words_dl.select("dd")
             word_list = []
             
             for i,dt in enumerate(hanja_dt):
                 ch = dt.text.strip()
-                word_list.append({'chinese':ch})
+                # We are using at most 4 character words
+                if(len(ch) > 4):
+                    print("SKIP:Char: "+ch)
+                    continue
+                word_list.append({'chinese':ch,
+                                  'korean' : han_mean_dd[2*i].text.strip(),
+                                  'meaning' : han_mean_dd[2*i+1].text.strip()})
                 for hanja in ch:
-                    if this._ds.knowHanja(hanja):
+                    if not this._ds.canAddToQueue(hanja):
                         continue
                     this._ds.addRootPlaceholder(hanja)
                     print("Adding "+hanja+" to the queue")
                     this._hanja_queue.append(hanja)
-            
-            for i, dd in enumerate(han_mean_dd):
-                word_idx = i//2;
-                if i%2 == 0:
-                    # First pass for this word. This is the Korean pronunciation
-                    word_list[word_idx]['korean'] = dd.text.strip()
-                elif i%2 == 1:
-                    # Second pass on this word. This is the meaning
-                    word_list[word_idx]['meaning'] = dd.text
                     
             for i, wd in enumerate(word_list):
                 this._ds.addWord(wd)
@@ -86,19 +94,19 @@ class naver_scraper(object):
         # this._word_list = this._word_list + word_list
 
     def scrape_hanja(this,hanja):
+        print("SCRHAN: Scraping hanja: "+hanja)
         url_hanja = hanja.encode('utf-8')
         url_hanja = quote(url_hanja)
         url = this._hanja_prefix+url_hanja
         sp = this._get_the_soup(url)
         
         pronunciation = sp.select("dd")[3].select("strong")[0].text
-        short_meaning = pronunciation.split(",")[0].split()[0]
-
         pronunciation = pronunciation.split(",")[0].split()[-1]
 
         meaning = sp.select(".kinds_list")[0]
         meaning = meaning.select("ul")[0]
-        meaning = meaning.select("li")[0].text
+        meaning = meaning.select("li")[0].text[3:]
+        short_meaning = meaning.split(",")[0].strip()
 
         hanja_dic = {'chinese' : hanja,
                      'pronunciation' : pronunciation,
@@ -124,24 +132,34 @@ class naver_scraper(object):
         # The number of web requests here is about O(logn). This is fine.
         while (len(this._hanja_queue) > 0 and 
                this._scraped_hanjas < this._max_hanjas):
-            hanja = this._hanja_queue.popleft()
-            print("Getting "+hanja+" from the queue")
-            this.scrape_word_query(hanja)
-            this.scrape_hanja(hanja)
+            try:
+                hanja = this._hanja_queue.popleft()
+                print("Getting "+hanja+" from the queue")
+                this.scrape_hanja(hanja)
+                this.scrape_word_query(hanja)
+            except:
+                ipdb.set_trace()
+        this._done_scrape = True
 
+    def scrape_english(this):
         # The number of web requests here is O(n). This is not good.
+        if not this._done_scrape:
+            print("Should run a full 'chinese' scrape first.")
         for w in this._ds._words:
-            word_dic = this._ds._words[w]
-            this._get_english(word_dic['korean'],word_dic)
+            try:
+                word_dic = this._ds._words[w]
+                this._get_english(word_dic['korean'],word_dic)
+            except:
+                pass
 
         # At this point we have all our words, and now we should get the english 
 
 
-sc = naver_scraper({'initial_hanja' : u'\u5927',
+sc = naver_scraper({'initial_hanja' : u'\u5e03',
                     'url_prefix':'http://hanja.naver.com/search/word?query=',
                     'hanja_url_prefix':'http://hanja.naver.com/hanja?q=',
                     'english_meaning_pref':'http://endic.naver.com/search.nhn?sLn=en&searchOption=entry_idiom&query=',
-                    'max_hanjas': 1000,
+                    'max_hanjas': 6000,
                     'max_pages_per_query': 10,
                     'word_id': 'chinese'})
 

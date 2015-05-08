@@ -141,13 +141,19 @@ class naver_scraper(object):
                 ipdb.set_trace()
         this._done_scrape = True
 
+    def scrape_english_hanja(this):
+        this._scrape_english(this._ds._hanja_data)
+
     def scrape_english(this):
+        this._scrape_english(this._ds._words)
+
+    def _scrape_english(this,dic):
         # The number of web requests here is O(n). This is not good.
         if not this._done_scrape:
             print("Should run a full 'chinese' scrape first.")
-        for w in this._ds._words:
+        for w in dic:
             try:
-                word_dic = this._ds._words[w]
+                word_dic = dic[w]
                 this._get_english(word_dic['korean'],word_dic)
             except:
                 pass
@@ -164,3 +170,5 @@ sc = naver_scraper({'initial_hanja' : u'\u5e03',
                     'word_id': 'chinese'})
 
 sc.scrape()
+# sc.scrape_english()
+# sc.scrape_english_hanja()

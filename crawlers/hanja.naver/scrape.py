@@ -5,6 +5,7 @@ from collections import deque
 from urllib import quote
 import json
 import ipdb
+from make_graph import NaverGraphMaker
 
 class naver_scraper(object):
     def __init__(this,config):
@@ -169,6 +170,13 @@ sc = naver_scraper({'initial_hanja' : u'\u5e03',
                     'max_pages_per_query': 10,
                     'word_id': 'chinese'})
 
+"""
+The scraping process should be run as follows:
+- Do NOT run unless knowing for sure what you're doing. This will run over 200,000 queries
+on naver's dictionaries.
+
 sc.scrape()
-# sc.scrape_english()
-# sc.scrape_english_hanja()
+sc.scrape_english()
+ sc.scrape_english_hanja()
+G = NaverGraphMaker.make_bipartite_graph(sc._ds._hanja_data,sc._ds._words)
+"""

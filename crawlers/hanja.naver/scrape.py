@@ -5,7 +5,7 @@ from collections import deque
 from urllib import quote
 import json
 import ipdb
-from make_graph import NaverGraphMaker
+from make_graph import make_bipartite_graph
 
 class naver_scraper(object):
     def __init__(this,config):
@@ -178,5 +178,5 @@ on naver's dictionaries.
 sc.scrape()
 #sc.scrape_english()
 # sc.scrape_english_hanja()
-#G = NaverGraphMaker.make_bipartite_graph(sc._ds._hanja_data,sc._ds._words)
+#G = make_bipartite_graph(sc._ds._hanja_data,sc._ds._words)
 

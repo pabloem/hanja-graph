@@ -4,7 +4,7 @@ class NaverGraphMaker(object):
     def __init__(this):
         pass
 
-    def make_bipartite_graph(hanjas, hanguls):
+    def make_bipartite_graph(this,hanjas, hanguls):
         G = nx.Graph()
         for han in hanjas:
             hanjas[han]['bipartite'] = 0

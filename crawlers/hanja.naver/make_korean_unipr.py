@@ -49,3 +49,4 @@ def add_to_dict(w,chardic):
 #f = open('data/words_save_080552015.json','r')
 #han_lst = json.loads(f.read())
 #G = make_uniprojection(han_lst)
+#G.write_graphml("hangul_uniprojection.graphml")

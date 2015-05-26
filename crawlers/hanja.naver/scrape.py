@@ -67,7 +67,7 @@ class naver_scraper(object):
                 words_dl = sp.select("#content")[0].select("dl")[0]
             except IndexError:
                 print("SCRWRD: Couldn't find definitions in page")
-                continue
+                break
             hanja_dt = words_dl.select("dt")
             han_mean_dd = words_dl.select("dd")
             word_list = []
@@ -131,13 +131,13 @@ class naver_scraper(object):
                     
     def scrape(this):
         # The number of web requests here is about O(logn). This is fine.
-        while (len(this._hanja_queue) > 0 and 
-               this._scraped_hanjas < this._max_hanjas):
+        while (len(this._hanja_queue) > 0):
             try:
                 hanja = this._hanja_queue.popleft()
                 print("Getting "+hanja+" from the queue")
                 this.scrape_hanja(hanja)
-                this.scrape_word_query(hanja)
+                if this._scraped_hanjas <= this._max_hanjas:
+                    this.scrape_word_query(hanja)
             except:
                 ipdb.set_trace()
         this._done_scrape = True
@@ -162,21 +162,21 @@ class naver_scraper(object):
         # At this point we have all our words, and now we should get the english 
 
 
-sc = naver_scraper({'initial_hanja' : u'\u5e03',
+sc = naver_scraper({'initial_hanja' : u'\u5927',
                     'url_prefix':'http://hanja.naver.com/search/word?query=',
                     'hanja_url_prefix':'http://hanja.naver.com/hanja?q=',
                     'english_meaning_pref':'http://endic.naver.com/search.nhn?sLn=en&searchOption=entry_idiom&query=',
-                    'max_hanjas': 6000,
-                    'max_pages_per_query': 10,
+                    'max_hanjas': 3000,
+                    'max_pages_per_query': 4,
                     'word_id': 'chinese'})
 
 """
 The scraping process should be run as follows:
 - Do NOT run unless knowing for sure what you're doing. This will run over 200,000 queries
 on naver's dictionaries.
-
-sc.scrape()
-sc.scrape_english()
- sc.scrape_english_hanja()
-G = NaverGraphMaker.make_bipartite_graph(sc._ds._hanja_data,sc._ds._words)
 """
+sc.scrape()
+#sc.scrape_english()
+# sc.scrape_english_hanja()
+#G = NaverGraphMaker.make_bipartite_graph(sc._ds._hanja_data,sc._ds._words)
+

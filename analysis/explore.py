@@ -14,7 +14,6 @@ G = G.subgraph(mainLst)
 
 if nxa.is_connected(G) == False:
     print("We have a PROBLEM, Houston.")
-    return
 
 lengths = 0
 if not os.path.isfile('splen.json'):
@@ -47,9 +46,9 @@ if not os.path.isfile('distcount.json'):
         [u'職',u'線'], #Jik - straight, Seon - line
         [u'父',u'母'], #Bu - father, Mo - mother
         [u'業',u'職'], #Eob - business trade, Jik - duty, profession
-        [u'人',u'者']  #In - person, Ja - That, who, he
-        [u'回',u'環'] # Hoe - return, turn around, Hwan - ring, bracelet
-        [u'見',u'視'] # Kyeon - Observe, percieve, Shi - Inspect, observe, see
+        [u'人',u'者'],  #In - person, Ja - That, who, he
+        [u'回',u'環'], # Hoe - return, turn around, Hwan - ring, bracelet
+        [u'見',u'視'], # Kyeon - Observe, percieve, Shi - Inspect, observe, see
         [u'聞',u'聽'] # Moon - Hear, make known, Cheong - Hear, listen
         # Shik - formula, Gyu - regulation
         # Hyeong - shape, Mo - standard, model

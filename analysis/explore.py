@@ -12,7 +12,7 @@ gen = nxa.connected_components(G)
 mainLst = gen.next()
 G = G.subgraph(mainLst)
 
-if not nxa.is_connected(G) == True:
+if nxa.is_connected(G) == False:
     print("We have a PROBLEM, Houston.")
     return
 

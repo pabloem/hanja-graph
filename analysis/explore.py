@@ -74,3 +74,21 @@ else:
         distance_count = distances['all_nodes']
         
 avg_distance = nxa.average_shortest_path_length(G)
+
+import number_of_walks as now
+num_2step_walks = now.all_pairs_number_of_walks(G,2)
+
+num_2step_walk_dist = {}
+for h1 in num_2step_walks:
+    for h2 in num_2step_walks[h1]:
+        if num_2step_walks[h1][h2] not in num_2step_walk_dist:
+            num_2step_walk_dist[num_2step_walks[h1][h2]] = 0
+        num_2step_walk_dist[num_2step_walks[h1][h2]] += 1
+
+sp_num_walks = {}
+for lst in similar_pairs:
+    h1 = lst[0]
+    h2 = lst[1]
+    if num_2step_walks[h1][h2] not in sp_distances:
+        sp_num_walks[num_2step_walks[h1][h2]] = 0
+    sp_num_walks[num_2step_walks[h1][h2]] += 1

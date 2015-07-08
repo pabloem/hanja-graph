@@ -98,7 +98,7 @@ sp_num_walks = {}
 for lst in similar_pairs:
     h1 = lst[0]
     h2 = lst[1]
-    if num_2step_walks[h1][h2] not in sp_distances:
+    if num_2step_walks[h1][h2] not in sp_num_walks:
         sp_num_walks[num_2step_walks[h1][h2]] = 0
     sp_num_walks[num_2step_walks[h1][h2]] += 1
     if num_2step_walks[h1][h2] == 0: continue
@@ -108,14 +108,12 @@ for lst in similar_pairs:
 for elm in sp_num_walks:
     sp_num_walks[elm] = sp_num_walks[elm]/2
 
-gen_95pc = np.percentile(normalized_2step_w,95)
-sp_95pc =  np.percentile(sp_normalized_nw,95)
+gen_99pc = np.percentile(normalized_2step_w,99)
+deg_50pc = np.mean(G.degree())
+del normalized_2step_w
 
-for h1 in num_2step_walks:
-    for h2 in num_2step_walks[h1]:
-        if h1 == h2: continue
-        if num_2step_walks[h1][h2] == 0: continue
-        num = num_2step_walks[h1][h2]/(G.degree(h1)+G.degree(h2)+.0)
-        if num > gen_95pc:
-            print("Above 95 perc: "+h1+" | "+h2+" | "+str(num))
-
+for lst in similar_pairs:
+    h1 = lst[0]
+    h2 = lst[1]
+    if num_2step_walks[h1][h2] == 0: continue
+    sp_normalized_nw.append(num_2step_walks[h1][h2]/(G.degree(h1)+G.degree(h2)+.0))

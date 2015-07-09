@@ -2,7 +2,7 @@
 import networkx as nx
 import networkx.algorithms as nxa
 
-G = nx.read_graphml('hanja_unip_2hanwds_03062015.graphml',unicode)
+G = nx.read_graphml('hanja_unip.graphml',unicode)
 
 
 # The 2-hanja graph projection is not connected, thus we must get the largest

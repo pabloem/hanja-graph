@@ -4,7 +4,7 @@ import networkx.algorithms as nxa
 import json
 import os.path
 
-G = nx.read_graphml('hanja_unip_2hanwds_03062015.graphml',unicode)
+G = nx.read_graphml('hanja_unip.graphml',unicode)
 
 
 similar_pairs =[

@@ -1,11 +1,13 @@
 # encoding: utf-8
 import networkx as nx
 import networkx.algorithms as nxa
+import heapq
 import json
 import os.path
+import io
 
-G = nx.read_graphml('hanja_unip.graphml',unicode)
-
+#G = nx.read_graphml('hanja_unip.graphml',unicode)
+G = nx.read_graphml('hanja_unip.graphml')
 
 similar_pairs =[
     [u'同',u'一'], #Dong - same, Il - one
@@ -30,13 +32,29 @@ similar_pairs =[
 
 # The 2-hanja graph projection is not connected, thus we must get the largest
 # connected component of the graph.
-gen = nxa.connected_components(G)
-mainLst = gen.next()
-G = G.subgraph(mainLst)
+#gen = nxa.connected_components(G)
+#mainLst = gen.next()
+#G = G.subgraph(mainLst)
 
 if nxa.is_connected(G) == False:
     print("We have a PROBLEM, Houston.")
 
+priQ = []
+for node in G.nodes():
+    deg = G.degree(node)
+    if deg == 0: continue
+    neighbors = G.neighbors(node)
+    tot = 0.0
+    for ng in neighbors:
+        tot += G.degree(ng)
+    ng_avg = tot/len(neighbors)
+    ratio = deg/ng_avg
+    heapq.heappush(priQ,(ratio,str(G.node[node])))
+
+with io.open('ratios.json','w',encoding='utf8') as json_file:
+    json.dump(heapq.nlargest(len(priQ),priQ),json_file, ensure_ascii=False,sort_keys=True,indent=4, separators=(',', ': '))
+
+"""
 lengths = 0
 if not os.path.isfile('splen.json'):
     lengths = nxa.all_pairs_shortest_path_length(G)
@@ -132,3 +150,4 @@ for h1 in num_2step_walks:
             h2Eng = '' if 'english' not in G.node[h2] else G.node[h2]['english']
             print(h1+"("+G.node[h1]['pronunciation']+") - "+ h1Eng+" | "+h2+"("+G.node[h2]['pronunciation']+") - "+ h2Eng+" | "+str(norm_2sp_wks))
 del firsts
+"""

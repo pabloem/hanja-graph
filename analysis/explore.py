@@ -32,13 +32,65 @@ similar_pairs =[
 
 # The 2-hanja graph projection is not connected, thus we must get the largest
 # connected component of the graph.
-#gen = nxa.connected_components(G)
-#mainLst = gen.next()
-#G = G.subgraph(mainLst)
+gen = nxa.connected_components(G)
+mainLst = next(gen)
+G = G.subgraph(mainLst)
 
 if nxa.is_connected(G) == False:
     print("We have a PROBLEM, Houston.")
 
+import scipy as sp
+import numpy as np
+M = nx.adjacency_matrix(G)
+N = M.toarray()
+Nlog = np.log2(N+1)
+import scipy.stats as sps
+entropy = sps.entropy(Nlog)
+entropy = entropy + 1
+
+res = np.divide(N,entropy)
+
+U, s, V = sp.linalg.svd(res)
+s[20:] = 0
+
+N_a = np.dot(np.dot(np.matrix(U),np.diag(s)),np.matrix(V))
+
+p99 = np.percentile(N_a,99)
+
+highelms = []
+for i, e1 in enumerate(np.array(N_a)):
+    for j, e2 in enumerate(e1):
+        if e2 > p99:
+            highelms.append(e2)
+
+p99_99 = np.percentile(highelms,99)
+import random
+highelms = []
+for i, e1 in enumerate(np.array(N_a)):
+    for j, e2 in enumerate(e1):
+        if e2 > p99_99:
+            highelms.append((e2, i,j))
+
+
+keys = G.nodes()
+
+pairs = []
+def addNodes(i):
+    heapq.heappush(pairs, (highelms[i][0], random.randint(0,1000), G.node[keys[highelms[i][1]]], G.node[keys[highelms[i][2]]]))
+
+for i, el in enumerate(highelms):
+    addNodes(i)
+
+top_bot = heapq.nlargest(len(pairs),pairs)
+
+with io.open('svdpairs.json','w',encoding='utf8') as json_file:
+    json.dump(top_bot,json_file, ensure_ascii=False,indent=2, separators=(',', ': '))
+
+def printNodes(i):
+    print(G.node[keys[highelms[i][0]]])
+    print(G.node[keys[highelms[i][1]]])
+
+"""
 priQ = []
 for node in G.nodes():
     deg = G.degree(node)
@@ -53,7 +105,7 @@ for node in G.nodes():
 
 with io.open('ratios.json','w',encoding='utf8') as json_file:
     json.dump(heapq.nlargest(len(priQ),priQ),json_file, ensure_ascii=False,sort_keys=True,indent=4, separators=(',', ': '))
-
+"""
 """
 lengths = 0
 if not os.path.isfile('splen.json'):

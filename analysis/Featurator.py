@@ -21,6 +21,12 @@ class Featurator(object):
         self._features['self_neighbor_degree_ratio'] = self.self_neighbor_degree_ratio
         self._features['two_step_walks'] = self.two_step_walk_similarity
         self._features['connected'] = self.connected
+        self._features['degree_difference'] = self.degree_difference
+        self._features['degree_ratio'] = self.degree_ratio  # Does this make sense?
+        self._features['dispersion'] = self.dispersion
+        self._features['edge_connectivity'] = self.edge_connectivity # Note - this feature is pretty slow...
+        self._features['node_connectivity'] = self.node_connectivity # Note - this feature is pretty slow...
+        self._features['clustering_difference'] = self.clustering_difference
 
 
 # Here goes the list of features!
@@ -51,6 +57,47 @@ class Featurator(object):
         G = self._graph
         neighbors = G.neighbors(h1)
         return 1 if h2 in neighbors else 0
+
+    # This function returns the absolute difference between the degree of both nodes
+    def degree_difference(self,h1,h2):
+        G = self._graph
+        return abs(G.degree(h1) - G.degree(h2))
+
+    # This function returns the ratio of min_degree(A,B) divided by max_degree(A,B)
+    def degree_ratio(self,h1,h2):
+        G = self._graph
+        deg_ratio = (G.degree(h1)+0.0)/G.degree(h2)
+        return deg_ratio if deg_ratio <= 1 else 1/deg_ratio
+
+    # This function returns normalized dispersion
+    # See: Romantic Partnerships and the Dispersion of Social Ties: 
+    #      A Network Analysis of Relationship Status on Facebook. 
+    #      Lars Backstrom, Jon Kleinberg.
+    def dispersion(self,h1,h2):
+        G = self._graph
+        return nxa.dispersion(G,h1,h2,True)
+
+    # This function returns the minimum number of edges to remove to disconnect
+    # nodes h1 and h2.
+    def edge_connectivity(self,h1,h2):
+        G = self._graph
+        return nxa.edge_connectivity(G,h1,h2)
+
+    # This function returns the minimum number of nodes to remove to disconnect
+    # nodes h1 and h2
+    def node_connectivity(self,h1,h2):
+        G = self._graph
+        return nxa.node_connectivity(G,h1,h2)
+
+    # This function returns the absolute difference between the clustering 
+    # coefficient of both nodes
+    def clustering_difference(self,h1,h2):
+        G = self._graph
+        c_h1 = nxa.clustering(G,h1)
+        c_h2 = nxa.clustering(G,h2)
+        return abs(c_h1 - c_h2)
+
+
 
 # Here goes the list of helper functions
     def calculate_two_step_walks(self):

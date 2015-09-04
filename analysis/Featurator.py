@@ -120,7 +120,7 @@ class Featurator(object):
             neighbors = G.neighbors(node)
             tot = 0.0
             for ng in neighbors:
-                tot = += G.degree(ng)
+                tot += G.degree(ng)
             ng_avg = tot/len(neighbors)
             ratio = deg/ng_avg
             heapq.heappush(pq,(ratio,node))

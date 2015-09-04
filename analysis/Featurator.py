@@ -27,6 +27,8 @@ class Featurator(object):
         self._features['edge_connectivity'] = self.edge_connectivity # Note - this feature is pretty slow...
         self._features['node_connectivity'] = self.node_connectivity # Note - this feature is pretty slow...
         self._features['clustering_difference'] = self.clustering_difference
+        self._features['closeness_difference'] = self.closeness_diference
+        self._features['betweenness_difference'] = self.betweenness_diference
 
 
 # Here goes the list of features!
@@ -97,6 +99,25 @@ class Featurator(object):
         c_h2 = nxa.clustering(G,h2)
         return abs(c_h1 - c_h2)
 
+    # This function returns the absolute difference between the closeness centrality
+    # of both nodes
+    def closeness_difference(self,h1,h2):
+        G = self._graph
+        c_h1 = nxa.closeness_centrality(G,h1)
+        c_h2 = nxa.closeness_centrality(G,h2)
+        return abs(c_h1 - c_h2)
+
+    # This function returns the absolute difference between the betweenness centrality
+    # of both nodes
+    def betweenness_difference(self,h1,h2):
+        if not hasattr(self,'_betweenness_centralities'):
+            self.calculate_betweenness_centrality()
+        return abs(self._betweenness_centralities[h1] - self._betweenness_centralities[h2])
+
+    def pagerank_difference(self,h1,h2):
+        if not hasattr(self,'_pageranks'):
+            self.calculate_pagerank()
+        return abs(self._pageranks[h1] - self._pageranks[h2])
 
 
 # Here goes the list of helper functions
@@ -110,6 +131,15 @@ class Featurator(object):
 
         # This structure stores the NORMALIZED number of 2 step walks
         self._num_two_step_walks = two_st_walks
+
+    def calculate_pagerank(self):
+        G = self._graph
+        pr = nx.pagerank_scipy(G)
+        self._pageranks = pr
+
+    def calculate_betweenness_centrality(self):
+        G = self._graph
+        self._betweenness_centralities = nxa.betweenness_centrality(G)
 
     def calculate_sn_degree_ratio(self):
         pq = []

@@ -27,15 +27,24 @@ class Featurator(object):
         self._features['edge_connectivity'] = self.edge_connectivity # Note - this feature is pretty slow...
         self._features['node_connectivity'] = self.node_connectivity # Note - this feature is pretty slow...
         self._features['clustering_difference'] = self.clustering_difference
-        self._features['closeness_difference'] = self.closeness_diference
-        self._features['betweenness_difference'] = self.betweenness_diference
+        self._features['closeness_difference'] = self.closeness_difference
+        self._features['betweenness_difference'] = self.betweenness_difference
+
+    def feature_list(self):
+        return list(self._features.keys())
+
+    def get_feature_dict(self,h1,h2):
+        res = {}
+        for feature in self.feature_list():
+            res[feature] = self._features[feature](h1,h2)
+        return res
 
 
 # Here goes the list of features!
     # This function returns the normalized distance in the ordered list
     # of self-neighbor degree ratios. Smaller numbers mean that both nodes
     # have a similar degree ratio compared to the
-    def self_neighbor_degree_ratio(h1,h2):
+    def self_neighbor_degree_ratio(self,h1,h2):
         if not hasattr(self,'_deg_ratio_distances'):
             self.calculate_sn_degree_ratio()
 
@@ -127,6 +136,9 @@ class Featurator(object):
 
         for h1 in two_st_walks:
             for h2 in two_st_walks[h1]:
+                if G.degree(h1) == 0 or G.degree(h2) == 0:
+                    two_st_walks[h1][h2] = 0
+                    continue
                 two_st_walks[h1][h2] = (two_st_walks[h1][h2] + 0.0)/min(G.degree(h1),G.degree(h2))
 
         # This structure stores the NORMALIZED number of 2 step walks

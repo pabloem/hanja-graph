@@ -12,13 +12,14 @@ if len(sys.argv) < 3:
     sys.exit()
 
 def calculate_features(queue,g_file, pairs):
+    print("Started!")
     G = nx.read_graphml(graph_file)
     gen = nxa.connected_components(G)
     mainLst = next(gen)
     G = G.subgraph(mainLst)
     f = Featurator(G)
-    print(g_file)
-    print(str(len(pairs)))
+    print("File: "+g_file)
+    print("Pairs: "+str(len(pairs)))
 
     count = 0
     

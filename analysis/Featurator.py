@@ -20,15 +20,23 @@ class Featurator(object):
     def configure_features(self):
         self._features['self_neighbor_degree_ratio'] = self.self_neighbor_degree_ratio
         self._features['two_step_walks'] = self.two_step_walk_similarity
-        self._features['connected'] = self.connected
+        self._features['reciprocity'] = self.connected
         self._features['degree_difference'] = self.degree_difference
+        self._features['degree_sum'] = self.degree_sum
         self._features['degree_ratio'] = self.degree_ratio  # Does this make sense?
         self._features['dispersion'] = self.dispersion
-        self._features['edge_connectivity'] = self.edge_connectivity # Note - this feature is pretty slow...
-        self._features['node_connectivity'] = self.node_connectivity # Note - this feature is pretty slow...
+        #self._features['edge_connectivity'] = self.edge_connectivity # Note - this feature is way too slow...
+        #self._features['node_connectivity'] = self.node_connectivity # Note - this feature is way too slow...
         self._features['clustering_difference'] = self.clustering_difference
+        self._features['clustering_sum'] = self.clustering_sum
+        self._features['clustering_rate'] = self.clustering_rate
         self._features['closeness_difference'] = self.closeness_difference
+        self._features['closeness_sum'] = self.closeness_sum
         self._features['betweenness_difference'] = self.betweenness_difference
+        self._features['betweenness_sum'] = self.betweenness_sum
+        self._features['pagerank_difference'] = self.pagerank_difference
+        self._features['pagerank_sum'] = self.pagerank_sum
+        self._features['shortest_distance'] = self.shortest_path_length
 
     def feature_list(self):
         return list(self._features.keys())
@@ -74,6 +82,11 @@ class Featurator(object):
         G = self._graph
         return abs(G.degree(h1) - G.degree(h2))
 
+    # This function returns the absolute difference between the degree of both nodes
+    def degree_sum(self,h1,h2):
+        G = self._graph
+        return G.degree(h1) + G.degree(h2)
+
     # This function returns the ratio of min_degree(A,B) divided by max_degree(A,B)
     def degree_ratio(self,h1,h2):
         G = self._graph
@@ -108,6 +121,23 @@ class Featurator(object):
         c_h2 = nxa.clustering(G,h2)
         return abs(c_h1 - c_h2)
 
+    # This function returns the sum of the clustering 
+    # coefficient of both nodes
+    def clustering_sum(self,h1,h2):
+        G = self._graph
+        c_h1 = nxa.clustering(G,h1)
+        c_h2 = nxa.clustering(G,h2)
+        return c_h1 + c_h2
+
+    # This function returns the absolute difference between the clustering 
+    # coefficient of both nodes
+    def clustering_rate(self,h1,h2):
+        G = self._graph
+        c_h1 = nxa.clustering(G,h1)
+        c_h2 = nxa.clustering(G,h2)
+        min_degree = min(max(1,G.degree(h1)),max(1,G.degree(h2)))+0.0
+        return c_h1*c_h2/min_degree
+
     # This function returns the absolute difference between the closeness centrality
     # of both nodes
     def closeness_difference(self,h1,h2):
@@ -116,6 +146,14 @@ class Featurator(object):
         c_h2 = nxa.closeness_centrality(G,h2)
         return abs(c_h1 - c_h2)
 
+    # This function returns the sum of the closeness centrality
+    # of both nodes
+    def closeness_sum(self,h1,h2):
+        G = self._graph
+        c_h1 = nxa.closeness_centrality(G,h1)
+        c_h2 = nxa.closeness_centrality(G,h2)
+        return c_h1 + c_h2
+
     # This function returns the absolute difference between the betweenness centrality
     # of both nodes
     def betweenness_difference(self,h1,h2):
@@ -123,11 +161,34 @@ class Featurator(object):
             self.calculate_betweenness_centrality()
         return abs(self._betweenness_centralities[h1] - self._betweenness_centralities[h2])
 
+    # This function returns the absolute difference between the betweenness centrality
+    # of both nodes
+    def betweenness_sum(self,h1,h2):
+        if not hasattr(self,'_betweenness_centralities'):
+            self.calculate_betweenness_centrality()
+        return self._betweenness_centralities[h1] + self._betweenness_centralities[h2]
+
+    # This function returns the absolute difference between the pagerank centrality
+    # of both nodes
     def pagerank_difference(self,h1,h2):
         if not hasattr(self,'_pageranks'):
             self.calculate_pagerank()
         return abs(self._pageranks[h1] - self._pageranks[h2])
 
+    # This function returns the sum of the pagerank centrality
+    # of both nodes
+    def pagerank_sum(self,h1,h2):
+        if not hasattr(self,'_pageranks'):
+            self.calculate_pagerank()
+        return self._pageranks[h1] + self._pageranks[h2]
+
+    # This function returns the shortest path length between both nodes, or 0 if they are not connected
+    def shortest_path_length(self,h1,h2):
+        G = self._graph
+        try:
+            return nxa.shortest_path_length(G,h1,h2)
+        except NetworkXNoPath:
+            return 0
 
 # Here goes the list of helper functions
     def calculate_two_step_walks(self):

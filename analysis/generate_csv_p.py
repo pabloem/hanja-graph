@@ -4,6 +4,7 @@ import networkx as nx
 import networkx.algorithms as nxa
 import csv
 import sys
+import time
 import multiprocessing as mp
 from multiprocessing import Queue, Process
 
@@ -24,6 +25,9 @@ def calculate_features(queue,g_file, pairs):
     count = 0
     
     for pair in pairs:
+        #queue.put(pair)
+        count += 1
+        #continue
         h1 = pair[0]
         h2 = pair[1]
         res = f.get_feature_dict(h1,h2)
@@ -33,8 +37,7 @@ def calculate_features(queue,g_file, pairs):
         res['h2'] = h2 if h1 < h2 else h1
         # PUT PAIR IN QUEUE!
         queue.put(res)
-        count += 1
-        if count % 2000 == 1: print("Calculated " + str(count)+" elements")
+    print("Calculated everyone! - "+str(count))
     queue.put('done')
 
 graph_file = sys.argv[1]
@@ -53,6 +56,7 @@ G = G.subgraph(mainLst)
 
 pairs = [(h1, h2) for i,h1 in enumerate(G.nodes()) for j,h2 in enumerate(G.nodes()) if j > i]
 
+
 def chunks(l, n):
     for i in range(0,len(l),n):
         print("Yielding from "+str(i)+" to "+str(i+n))
@@ -60,6 +64,8 @@ def chunks(l, n):
 
 pair_chunks = list(chunks(pairs,len(pairs)//processes+1))
 print(str(len(pair_chunks)))
+
+start_time = time.time()
 
 pList = []
 q = Queue()
@@ -83,11 +89,16 @@ while True:
     res = q.get()
     count += 1
     if count % 1000 == 1:
-        print("Added total of " +str(count)+" pairs.")
+        secs = int(time.time() - start_time)
+        hours = secs//3600
+        secs = secs - hours*3600
+        print("Added total of " +str(count)+" pairs. Took "+str(hours)+":"+str(secs))
     if res == 'done': 
         done += 1
         if done == processes: break
         continue
     writer.writerow(res)
-
+        
 csvfile.close()
+
+print("Incredibly, we are done. Added a total of "+str(count)+" pairs")

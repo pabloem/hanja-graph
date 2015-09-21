@@ -1,4 +1,7 @@
 #!/usr/bin/python
+
+# This program, given a file with one hanja character per line, obtains
+# their first appearing antonym and synonym.
 import sys
 from relatedWords import get_syn_ant
 

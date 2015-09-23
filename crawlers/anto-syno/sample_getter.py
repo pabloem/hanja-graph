@@ -28,9 +28,10 @@ ant_file = open(antonyms_outfile,"w")
 for elm in res:
     if len(elm['antonyms']) < 1:
         continue
-    first = elm['hanja'] if elm['hanja'] < elm['antonyms'][0] else elm['antonyms'][0]
-    second = elm['hanja'] if elm['hanja'] >= elm['antonyms'][0] else elm['antonyms'][0]
-    ant_file.write(first.encode("utf-8")+","+second.encode("utf-8")+"\n")
+    for i in range(len(elm['antonyms'])):
+        first = elm['hanja'] if elm['hanja'] < elm['antonyms'][i] else elm['antonyms'][i]
+        second = elm['hanja'] if elm['hanja'] >= elm['antonyms'][i] else elm['antonyms'][i]
+        ant_file.write(first.encode("utf-8")+","+second.encode("utf-8")+"\n")
 
 ant_file.close()
 
@@ -39,8 +40,9 @@ syn_file = open(synonyms_outfile,"w")
 for elm in res:
     if len(elm['synonyms']) < 1:
         continue
-    first = elm['hanja'] if elm['hanja'] < elm['synonyms'][0] else elm['synonyms'][0]
-    second = elm['hanja'] if elm['hanja'] >= elm['synonyms'][0] else elm['synonyms'][0]
-    syn_file.write(first.encode("utf-8")+","+second.encode("utf-8")+"\n")
+    for i in range(len(elm['synonyms'])):
+        first = elm['hanja'] if elm['hanja'] < elm['synonyms'][i] else elm['synonyms'][i]
+        second = elm['hanja'] if elm['hanja'] >= elm['synonyms'][i] else elm['synonyms'][i]
+        syn_file.write(first.encode("utf-8")+","+second.encode("utf-8")+"\n")
 
 syn_file.close()

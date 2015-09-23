@@ -16,15 +16,16 @@ To generate the synonyms training set we need to follow these steps:
     $> shuf -n 1000 res.csv | awk -F "," '{print $3}' > tmp
     $> cat tmp | sort | uniq > random_hanjas.txt
 ``` 
-    * Obtain synonyms and antonyms for these hanjas
+
+* Obtain synonyms and antonyms for these hanjas
+
 ``` 
     $> ../crawlers/anto-syno/sample_getter.py random_hanjas.txt synonyms_hanja.txt antonyms_hanja.txt
 ``` 
-    * Get the features from these pairs of synonyms or antonyms
+* Get the features from these pairs of synonyms or antonyms
 ``` 
     $> ./generate_training_csv.py synonyms_hanja.txt res.csv ../synonyms/synonyms.csv
 ``` 
 4. Use the result to run a classification scheme ; )
-
 
 ## Runing the classification script

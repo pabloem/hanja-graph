@@ -20,7 +20,7 @@ To generate the synonyms training set we need to follow these steps:
 
 * Obtain synonyms and antonyms for these hanjas
 
-`$> ../crawlers/anto-syno/sample_getter.py random_hanjas.txt synonyms_hanja.txt antonyms_hanja.txt`
+`$> ../crawlers/anto-syno/sample_getter.py random_hanjas.txt antonyms_hanja.txt synonyms_hanja.txt`
 
 * Get the features from these pairs of synonyms or antonyms
 
@@ -29,3 +29,11 @@ To generate the synonyms training set we need to follow these steps:
 (4). Use the result to run a classification scheme ; )
 
 ## Runing the classification script
+
+(1) Run the classification script
+
+`$> cd ../synonyms/ ; ./get_synonyms.py ../analysis/res.csv synonyms_training.csv training_non_related.csv guess_syn1.txt`
+
+(2) Verify the results
+
+`$> ../crawlers/anto-syno/sample_tester.py guess_syn1.txt`

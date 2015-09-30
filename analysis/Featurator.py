@@ -37,6 +37,9 @@ class Featurator(object):
         self._features['pagerank_difference'] = self.pagerank_difference
         self._features['pagerank_sum'] = self.pagerank_sum
         self._features['shortest_distance'] = self.shortest_path_length
+        self._features['same_7_clique_com'] = self.same_7_clique_com
+        self._features['same_6_clique_com'] = self.same_6_clique_com
+
 
     def feature_list(self):
         return list(self._features.keys())
@@ -59,6 +62,21 @@ class Featurator(object):
         if h1 not in self._deg_ratio_distances:
             return self._deg_ratio_distances[h2][h1]
         return self._deg_ratio_distances[h1][h2]
+
+    def same_7_clique_com(self,h1,h2):
+        if not hasattr(self,'_7_clique_coms'):
+            self._get_7_clique_coms()
+
+        for comset in self._7_clique_coms:
+            if h1 in comset and h2 in comset: return 1
+        return 0
+
+    def same_6_clique_com(self,h1,h2):
+        if not hasattr(self,'_6_clique_coms'):
+            self._get_6_clique_coms()
+        for comset in self._6_clique_coms:
+            if h1 in comset and h2 in comset: return 1
+        return 0
 
     # This function returns the normalized two-step-walk similarity, calculated as follows:
     # let num_walks = number of 2-step walks between hanja A and B
@@ -191,6 +209,22 @@ class Featurator(object):
             return 0
 
 # Here goes the list of helper functions
+
+    def _get_7_clique_coms(self):
+        G = self._graph
+        coms = nxa.k_clique_communities(G,7)
+        self._7_clique_coms = []
+        for com in coms:
+            self._7_clique_coms.append(com)
+
+    def _get_6_clique_coms(self):
+        G = self._graph
+        coms = nxa.k_clique_communities(G,6)
+        self._6_clique_coms = []
+        for com in coms:
+            self._6_clique_coms.append(com)
+
+        
     def calculate_two_step_walks(self):
         two_st_walks = now.all_pairs_number_of_walks(self._graph,2)
         G = self._graph

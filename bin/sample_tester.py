@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from relatedWords import get_syn_ant
+from crawlers.antosyno.relatedWords import get_syn_ant
 
 if len(sys.argv) < 2:
     print("# Usage: ./sample_tester.py input.json")

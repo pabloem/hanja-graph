@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-from Featurator import Featurator
+from analysis.Featurator import Featurator
 import networkx as nx
 import networkx.algorithms as nxa
 import csv

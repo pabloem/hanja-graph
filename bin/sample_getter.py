@@ -3,7 +3,7 @@
 # This program, given a file with one hanja character per line, obtains
 # their first appearing antonym and synonym.
 import sys
-from relatedWords import get_syn_ant
+from crawlers.antosyno.relatedWords import get_syn_ant
 
 if len(sys.argv) < 4:
     print("Usage: ./sample_getter.py input_file antonyms_outfile synonyms_outfile")

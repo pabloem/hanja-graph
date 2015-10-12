@@ -39,6 +39,9 @@ These are the utilities to scrape the Kanji information in
 * `make_kanji_graph.py` - This takes the JSON output from `scrape.py`, and makes it into a Graphml
 file.
 
+#### Scrape naver
+Not yet available : )
+
 ### Obtaining synonyms
 #### Obtaining the synonyms training set
 To generate the synonyms training set we need to follow these steps:

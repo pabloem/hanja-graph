@@ -60,7 +60,8 @@ print("Trying to find synonyms now!")
 f = open(input_csv)
 rd = csv.reader(f)
 rd.next() # Removing the head : P
-found = []
+found = 0
+rejected = 0
 count = 0
 fout = open(output,'w')
 
@@ -69,10 +70,14 @@ for elm in rd:
     new_elm = elm[3:] # Removing labels
     res = rfc.predict(string_to_features(new_elm))
     if res[0] == "syn":
-        print("Found a synonym: "+elm[0])
-        fout.write(elm[0]+'\n')
+        #print("Found a synonym: "+elm[0])
+        found += 1
+        fout.write(elm[1]+','+elm[2]+'\n')
+    else:
+        rejected += 1
 
     if count == amount: break
 
+print("Found a total of "+str(found)+" synonyms. Rejected "+str(rejected))
 f.close()
 fout.close()

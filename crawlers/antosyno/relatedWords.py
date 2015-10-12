@@ -44,14 +44,12 @@ def get_syn_ant(hanja):
 
     wt = get_word_txt(sp)
     if wt is None:
-        print("Found no related hanjas. Exiting")
         return None
 
     syn = get_synonyms(wt)
     ant = get_antonyms(wt)
 
     if len(syn) == 0 and len(ant) == 0:
-        print("Found no related hanjas. Exiting")
         return None
 
     return {'hanja':hanja, 'synonyms':syn, 'antonyms':ant}

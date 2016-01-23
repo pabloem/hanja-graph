@@ -82,3 +82,7 @@ To generate the synonyms training set we need to follow these steps:
 (2) Verify the results
 
 `$> ./bin/sample_tester.py data/guess_syn1.txt`
+
+(3) Verify the data by hand // Since Naver does not know all the Hanja synonyms
+
+`$> ./bin/get_pairs_meanings.py data/guess_syn1.txt output [amount]`

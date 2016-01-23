@@ -1,7 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 from analysis.Featurator import Featurator
 import networkx as nx
 import networkx.algorithms as nxa
+import json
 import csv
 import sys
 import time
@@ -9,7 +10,7 @@ import multiprocessing as mp
 from multiprocessing import Queue, Process
 
 if len(sys.argv) < 3:
-    print("Usage: ./generate_csv.py graph_file output_file [#processes]")
+    print("Usage: ./generate_csv.py graph_file output_file [-r radicals.json] [#processes]")
     sys.exit()
 
 def calculate_features(queue,g_file, pairs):
@@ -42,7 +43,17 @@ def calculate_features(queue,g_file, pairs):
 
 graph_file = sys.argv[1]
 output_file = sys.argv[2]
-processes = 1 if len(sys.argv) < 4 else int(sys.argv[3])
+radicals = None
+argc = 3
+if len(sys.argv) > 3 and sys.argv[argc] == '-r':
+    rfile = open(sys.argv[argc+1])
+    radicals = json.load(rfile)
+    rfile.close()
+    argc += 2
+
+processes = 1
+if len(sys.argv) > argc and sys.argv[argc] != '-r':
+    processes = int(sys.argv[argc])
 
 print("Graph file: "+graph_file +" | Output: "+output_file+" | Processes: "+str(processes))
 
@@ -75,7 +86,7 @@ for i in range(processes):
     pList.append(p)
 
 
-f = Featurator(G)
+f = Featurator(G,radicals)
 
 csv_fields = ['pair','h1','h2'] + f.feature_list()
 

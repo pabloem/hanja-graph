@@ -1,12 +1,20 @@
 import networkx as nx
 import networkx.algorithms as nxa
 import heapq
-import number_of_walks as now
+import sys
 import numpy as np
 
+print(sys.path)
+import number_of_walks as now
+
+
 class Featurator(object):
-    def __init__(self,G):
+    def __init__(self,G,radicals=None):
         self._graph = G
+        self._got_rads = False
+        if radicals is not None:
+            self._got_rads = True
+            self._rads = radicals;
         self._features = {}
         self.configure_features()
 
@@ -39,8 +47,19 @@ class Featurator(object):
         self._features['shortest_distance'] = self.shortest_path_length
         self._features['same_7_clique_com'] = self.same_7_clique_com
         self._features['same_6_clique_com'] = self.same_6_clique_com
+        if self._got_rads:
+            self._features['share_radical'] = self.share_radical
+            self._features['shared_radicals'] = self.shared_radicals
 
 
+    def share_radical(self,h1,h2):
+        sh1 = set(self._rads[h1])
+        sh2 = set(self._rads[h2])
+        return 1 if len(sh1.intersection(sh2)) > 0 else 0
+
+    def shared_radicals(self,h1,h2):
+        return (len(set(self._rads[h1]).intersection(set(self._rads[h2])))/max(len(self._rads[h1])+0.0,len(self._rads[h2])+0.0,1.0))
+            
     def feature_list(self):
         return list(self._features.keys())
 

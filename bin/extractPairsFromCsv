@@ -2,8 +2,16 @@
 import csv
 import sys
 
+usage = """Usage: ./extractPairsFromCsv pairs original_csv output
+
+This script takes a file with a list of pairs of characters, and a CSV file with node-pair features, 
+and generates a new CSV file containing only features of pairs of characters from the pairs file.
+This is normally used to extract features for synonyms for classifier training"""
+
 if len(sys.argv) < 4:
-    print("Usage: ./genetate_training_csv.py synonyms original_csv output")
+    print(usage)
+    sys.exit(1)
+
 
 synonyms = sys.argv[1]
 
@@ -35,7 +43,7 @@ for line in rd:
     #print(mix)
     if mix1 in syn_set or mix2 in syn_set: 
         found_synonyms += 1
-        print("Found a synonym : ) - Count: "+str(count))
+        print("Found a synonym - Count: "+str(count))
         syn_list.append(old_line)
     count += 1
 

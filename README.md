@@ -23,18 +23,13 @@ just want to have the data after all the processing
     the korean words from the bipartite graph. In the current version, the edge
     weights are 1 or 2, depending on how many chinese characters are shared
     between two words.
-* d3viz - This directory contains the code for the project of d3 visualization
-of the data. To use this directory, it is good to keep the d3 distro up to date
-by executing ```wget https://github.com/mbostock/d3/zipball/master``` in the
-directory.
-
 
 ### Scrapers/Crawlers
 #### Scrape Kanjis
 These are the utilities to scrape the Kanji information in
 'http://www.manythings.org/kanji/d/'. They all serve different purposes.
 
-* `scrape.py` - This is the main scraper. It gets the data and outputs a JSON file with
+* `scrape_kanji.py` - This is the main scraper. It gets the data and outputs a JSON file with
   words, and Kanjis. This JSON file can be used to generate the graphml file.
 * `make_kanji_graph.py` - This takes the JSON output from `scrape.py`, and makes it into a Graphml
 file.
@@ -50,11 +45,11 @@ To generate the synonyms training set we need to follow these steps:
 
 `$> nohup ./bin/generate_csv_p.py data/hanja_unip.graphml res.csv 4`
 
-(2) Obtain the 'zeros' in the training set
+(2) Obtain the 'zeros' in the training set. We do this through random sampling from the main CSV file
 
 `$> shuf -n 1000 data/res.csv > data/training_zeros`
 
-`$> ./bin/remove_first_three.py training_zeros data/training_non_related.csv`
+`$> ./bin/removeFirstColumns training_zeros data/training_non_related.csv`
 
 (3) Obtain the 'synonyms' in the training set
     * Obtain a random set of hanjas from the `res.csv` file
@@ -65,11 +60,11 @@ To generate the synonyms training set we need to follow these steps:
 
 * Obtain synonyms and antonyms for these hanjas
 
-`$> ./bin/sample_getter.py data/random_hanjas.txt data/antonyms_hanja.txt data/synonyms_hanja.txt`
+`$> ./bin/scrapeSynonyms data/random_hanjas.txt data/antonyms_hanja.txt data/synonyms_hanja.txt`
 
 * Get the features from these pairs of synonyms or antonyms
 
-`$> ./bin/generate_training_csv.py data/synonyms_hanja.txt data/res.csv data/synonyms.csv`
+`$> ./bin/extractPairsFromCsv data/synonyms_hanja.txt data/res.csv data/synonyms.csv`
 
 (4). Use the result to run a classification scheme ; )
 
@@ -81,7 +76,7 @@ To generate the synonyms training set we need to follow these steps:
 
 (2) Verify the results
 
-`$> ./bin/sample_tester.py data/guess_syn1.txt`
+`$> ./bin/checkSynonyms data/guess_syn1.txt`
 
 (3) Verify the data by hand // Since Naver does not know all the Hanja synonyms
 

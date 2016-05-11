@@ -31,7 +31,7 @@ if len(sys.argv) > argc:
     k = int(sys.argv[argc])
     argc += 1
 
-#G = nx.read_graphml('crawlers/naver/data/basic_hanja_bipartite_26052015.graphml')
+#G = nx.read_graphml('graphs/basic_hanja_bipartite_26052015.graphml')
 G = nx.read_graphml(inf)
 sts = nx.bipartite.sets(G)
 

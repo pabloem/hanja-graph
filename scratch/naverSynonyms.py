@@ -36,4 +36,7 @@ with open('korean_synonyms.csv','w') as f:
     wr = csv.writer(f)
     wr.writerows(synLst)
 
+with open('korean_synonyms2.csv','w') as f:
+    wr = csv.writer(f)
+    wr.writerows(otherSynLst)
 

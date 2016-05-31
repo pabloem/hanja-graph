@@ -15,7 +15,8 @@ baseUrl = "http://www.iciba.com/"
 allComb = []
 allSyn = []
 allAnt = []
-nwI = 0
+#nwI = 0
+nwI = 18305
 for i,w in enumerate(words):
     if i < nwI: continue
     if i % 50 == 0: 
@@ -69,14 +70,14 @@ for i,w in enumerate(words):
     wSyn.append(w)
     allComb += list(combinations(wSyn,2))
 
-with open("chinese_synonyms2.csv",'w') as f:
+with open("chinese_synonyms2_2.csv",'w') as f:
     wr = csv.writer(f)
     wr.writerows(allSyn)
 
-with open("chinese_antonyms.csv",'w') as f:
+with open("chinese_antonyms_2.csv",'w') as f:
     wr = csv.writer(f)
     wr.writerows(allAnt)
 
-with open("chinese_synonyms.csv",'w') as f:
+with open("chinese_synonyms_2.csv",'w') as f:
     wr = csv.writer(f)
     wr.writerows(allComb)
